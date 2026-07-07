@@ -1,0 +1,54 @@
+const {nanoid}=require("nanoid");
+const {Url}=require("../model/Url");
+const {client}=require("../cache/redisCache");
+const { json } = require("express");
+const {generateQRcode}=require("../utils/generateQRcode");
+//const {Url}=require("../model/Url");
+
+async function createShortUrl(req,res) {
+    const {longUrl,customUrl}=req.body;
+    if(!longUrl){
+        return res.status(400).json({msg:"url not provided"});
+    }
+
+    let shortId;
+
+    if(customUrl){
+        const exists=await Url.findOne({shortId:customUrl});
+        if(exists){
+            return res.status(409).json({msg:"this id in use send another"})
+        }
+        shortId=customUrl;
+    }else{
+       shortId=nanoid(8);
+
+    }
+    const qrcode=await generateQRcode(`http://localhost:3000/${shortId}`);
+    await Url.create({longUrl,shortId});
+    return res.status(201).json({
+        shortUrl:`http://localhost:3000/${shortId}`,
+        custom:customUrl?true:false,
+        qrcode,
+    });
+}
+
+async function redirectUrl(req,res) {
+    const {shortId}=req.params;
+    const cashed=await client.get(shortId);
+    if(cashed){
+        console.log("returned from redis");
+        return res.redirect((cashed));
+    }
+    const url=await Url.findOne({shortId});
+    if(!url){
+        return res.status(404).json({msg:"unable to find url"})
+    }
+    console.log(url);
+    await client.set(shortId,url.longUrl,"EX", 60*5)
+    url.clicks+=1;
+    await url.save();
+    console.log("return from db")
+    return res.redirect(url.longUrl);
+}
+
+module.exports={createShortUrl,redirectUrl};
