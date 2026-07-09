@@ -5,8 +5,8 @@ const {RedisStore}=require("rate-limit-redis");
 const rateLimiter=rateLimit({
     windowMs:60*1000, //1minute
     max:10, //max 10 req in minute
-    standardHeader:true,
-    legacyHeader:false,
+    standardHeaders:true,
+    legacyHeaders:false,
     store:new RedisStore({
         sendCommand:(...args)=>client.sendCommand(args)
     }),
