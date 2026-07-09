@@ -3,24 +3,35 @@ const dotevn=require("dotenv");
 
 dotevn.config();
 
-const connectDb=async ()=>{
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const connectDb=async (retryCount=0)=>{
     const user=process.env.MONGO_USER;
     const pass=process.env.MONGO_PASS;
-    const port=process.env.MONGO_PORT;
+    const host=process.env.MONGO_HOST || "127.0.0.1";
+    const port=process.env.MONGO_PORT || 27017;
     const db=process.env.MONGO_DB;
 
-    const URI=`mongodb://${user}:${pass}@localhost:${port}/${db}?authSource=admin`;
+    const URI=`mongodb://${user}:${pass}@${host}:${port}/${db}?authSource=admin`;
 
     try {
-        await mongoose.connect(URI,{
-            useNewUrlParser:true,
-            useUnifiedTopology:true,
-        })
+        await mongoose.connect(URI, {
+            serverSelectionTimeoutMS: 5000,
+        });
 
         console.log("mongo connected sucessfully")
     } catch (error) {
-        console.error(`the error is ${error.message}`)
-        process.exit(1);
+        const maxRetries = 8;
+        if (retryCount < maxRetries) {
+            console.warn(`MongoDB not ready yet at ${host}:${port}. Retrying in 2 seconds...`);
+            await sleep(2000);
+            return connectDb(retryCount + 1);
+        }
+
+        console.error(`MongoDB connection failed after ${maxRetries + 1} attempts: ${error.message}`);
+        console.warn("Continuing without MongoDB. Start MongoDB and restart the server to enable database features.");
     }
 }
 
