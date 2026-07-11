@@ -3,14 +3,15 @@ const {Url}=require("../model/Url");
 const {client}=require("../cache/redisCache");
 const { json } = require("express");
 const {generateQRcode}=require("../utils/generateQRcode");
-const dotenv=require("dotenv")
+const dotenv=require("dotenv");
+const {asyncHandler}=require("../utils/asycnHandler");
 
 const baseUrl=process.env.BASE_URL
 const cacheTTL=Number(process.env.CACHE_TTL)
 
 
-async function createShortUrl(req,res) {
-    const {longUrl,customUrl}=req.body;
+const createShortUrl=asyncHandler(async(req,res)=>{
+  const {longUrl,customUrl}=req.body;
     if(!longUrl){
         return res.status(400).json({msg:"url not provided"});
     }
@@ -23,18 +24,18 @@ async function createShortUrl(req,res) {
             return res.status(409).json({msg:"this id in use send another"})
         }
         shortId=customUrl;
-    }else{
+        }else{
        shortId=nanoid(8);
 
     }
-    const qrcode=await generateQRcode(`${baseUrl}/${shortId}`);
-    await Url.create({longUrl,shortId});
-    return res.status(201).json({
-        shortUrl:`${baseUrl}/${shortId}`,
-        custom:customUrl?true:false,
-        qrcode,
-    });
-}
+        const qrcode=await generateQRcode(`${baseUrl}/${shortId}`);
+        await Url.create({longUrl,shortId});
+        return res.status(201).json({
+            shortUrl:`${baseUrl}/${shortId}`,
+            custom:customUrl?true:false,
+            qrcode,
+        });
+}) 
 
 async function redirectUrl(req,res) {
     const {shortId}=req.params;
