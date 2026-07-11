@@ -10,7 +10,7 @@ const baseUrl=process.env.BASE_URL
 const cacheTTL=Number(process.env.CACHE_TTL)
 
 
-const createShortUrl=asyncHandler(async(req,res)=>{
+async function createShortUrl(req,res){
   const {longUrl,customUrl}=req.body;
     if(!longUrl){
         return res.status(400).json({msg:"url not provided"});
@@ -35,7 +35,7 @@ const createShortUrl=asyncHandler(async(req,res)=>{
             custom:customUrl?true:false,
             qrcode,
         });
-}) 
+}
 
 async function redirectUrl(req,res) {
     const {shortId}=req.params;
