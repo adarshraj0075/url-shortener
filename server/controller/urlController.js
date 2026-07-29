@@ -1,9 +1,9 @@
 const urlService=require("../service/urlService");
-
+const apiResponse=require("../utils/apiResponse")
 
 async function createShortUrl(req, res) {
     const data=await urlService.createShortUrl(req.body)
-    return res.status(201).json(data);
+    return res.status(201).json(apiResponse.success(data));
 }
 
 async function redirectUrl(req, res) {
