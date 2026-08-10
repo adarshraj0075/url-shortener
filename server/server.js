@@ -1,6 +1,6 @@
 const express = require("express");
 const {connectDb}=require("./config/db");
-const {router}=require("./routes/urlRoutes")
+const {router}=require("./routes/routes")
 const dotenv=require("dotenv")
 const app=express();
 const {errorHandler}=require("./middleware/errorHandler");
