@@ -1,0 +1,26 @@
+const bcrypt=require("bcrypt")
+const {User}=require("../model/userSchema")
+const ConflictError=require("../utils/errors/ConflictError")
+
+exports.register=({email,name,password})=>{
+    const existingUser=await User.findOne({email});
+
+    if(existingUser){
+        throw new ConflictError("Email already registered");
+    }
+
+    const hashedPassword=bcrypt.hash(password,12);
+
+    const user=User.create({
+        name,
+        email,
+        password:hashedPassword
+    })
+
+    return {
+        id:user._id,
+        name:user.name,
+        email:user.email,
+        role:user.role
+    }
+}
