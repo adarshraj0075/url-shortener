@@ -3,7 +3,7 @@ const { success } = require("zod");
 const validate=(schema,target="body")=>{
     return (req,res,next)=>{
         const allowedTarget=["body","query","params"];
-        if(!allowedTarget.includes(allowedTarget)){
+        if(!allowedTarget.includes(target)){
             return res.status(400).json({
                 success:false,
                 msg:"invalid validation target"

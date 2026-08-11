@@ -2,7 +2,7 @@ const bcrypt=require("bcrypt")
 const {User}=require("../model/userSchema")
 const ConflictError=require("../utils/errors/ConflictError")
 
-exports.register=({email,name,password})=>{
+exports.register=async({email,name,password})=>{
     const existingUser=await User.findOne({email});
 
     if(existingUser){
