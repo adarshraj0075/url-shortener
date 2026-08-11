@@ -2,7 +2,7 @@ const { AppError } = require("./AppError")
 
 class conflictError extends AppError{
     constructor(message="conflict"){
-        super(message,"409")
+        super(message,409)
     }
 }
 

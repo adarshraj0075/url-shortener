@@ -1,6 +1,6 @@
 class ForbiddenError extends AppError{
     constructor(message="forbidden"){
-        super(message,"403")
+        super(message,403)
     }
 }
 

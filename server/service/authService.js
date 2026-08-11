@@ -9,18 +9,20 @@ exports.register=async({email,name,password})=>{
         throw new ConflictError("Email already registered");
     }
 
-    const hashedPassword=bcrypt.hash(password,12);
-
-    const user=User.create({
+    const hashedPassword=await bcrypt.hash(password,12);
+    
+    const user=await User.create({
         name,
         email,
         password:hashedPassword
     })
 
-    return {
+    const data={
         id:user._id,
         name:user.name,
         email:user.email,
         role:user.role
     }
+    
+    return data
 }
