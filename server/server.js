@@ -4,10 +4,13 @@ const {router}=require("./routes/routes")
 const dotenv=require("dotenv")
 const app=express();
 const {errorHandler}=require("./middleware/errorHandler");
+const cookieParser=require("cookie-parser")
 
 connectDb()
 
 app.use(express.json());
+
+app.use(cookieParser())
 
 app.use("/",router);
 
