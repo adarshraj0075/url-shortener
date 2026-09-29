@@ -2,7 +2,7 @@ const urlService=require("../service/urlService");
 const apiResponse=require("../utils/apiResponse")
 
 async function createShortUrl(req, res) {
-    const data=await urlService.createShortUrl(req.body)
+    const data=await urlService.createShortUrl(req.body,req.user.id);
     return res.status(201).json(apiResponse.success(data));
 }
 

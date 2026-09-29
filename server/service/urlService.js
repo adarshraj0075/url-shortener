@@ -12,7 +12,7 @@ const NotFoundError = require("../utils/errors/NotFoundError");
 const baseUrl = process.env.BASE_URL;
 const cacheTTL = Number(process.env.CACHE_TTL);
 
-exports.createShortUrl=async({longUrl,customUrl})=>{
+exports.createShortUrl=async({longUrl,customUrl},userId)=>{
      // ❌ Remove this if Zod already validates longUrl
     // if (!longUrl) {
     //     throw new BadRequestError("URL not provided.");
@@ -38,6 +38,7 @@ exports.createShortUrl=async({longUrl,customUrl})=>{
 
     // Critical operation first
     await Url.create({
+        userId,
         longUrl,
         shortId
     });
