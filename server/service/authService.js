@@ -61,3 +61,14 @@ exports.login=async({email,password})=>{
         sessionId
     }
 }
+
+exports.logout=async({sessionId})=>{
+    const userId=await client.get(`session:${sessionId}`);
+    if(!userId) throw new UnauthorizedError("invalid sessionId")
+    await client.del(`session:${sessionId}`);
+
+    await client.sRem(`userSession:${userId}`,sessionId);
+
+    return "logged out";
+
+}

@@ -24,4 +24,18 @@ async function login(req,res) {
     )
 }
 
-module.exports={register,login};
+async function logout(req,res) {
+    const data=await authService.logout(req.cookies);
+
+    res.clearCookie("sessionId",{
+        httpOnly:true,
+        secure:process.env.NODE_ENV==="production",
+        sameSite:"strict"
+    })
+    
+    return res.status(200).json(
+        apiResponce.success(data)
+    )
+}
+
+module.exports={register,login,logout};

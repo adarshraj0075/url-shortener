@@ -5,7 +5,7 @@ const {asyncHandler}=require("../utils/asycnHandler");
 const { validate } = require("../middleware/validate");
 const { registerSchema,loginSchema } = require("../validator/auth.validator");
 
-const { register,login } = require("../controller/authController");
+const { register,login,logout } = require("../controller/authController");
 
 const { authMiddleware } = require("../middleware/authMiddleware")
 const router=express.Router()
@@ -23,5 +23,7 @@ router.post("/login",
     validate(loginSchema),
     asyncHandler(login)
 )
+
+router.post("/logout",asyncHandler(logout))
 
 module.exports={router};
