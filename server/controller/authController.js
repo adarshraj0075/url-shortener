@@ -38,4 +38,18 @@ async function logout(req,res) {
     )
 }
 
-module.exports={register,login,logout};
+async function logoutAll(req,res){
+    const data=await authService.logoutAll(req.user.id);
+
+    res.clearCookie("sessionId",{
+        httpOnly:true,
+        secure:process.env.NODE_ENV==="production",
+        sameSite:"strict"
+    })
+    
+    return res.status(200).json(
+        apiResponce.success(data)
+    )
+}
+
+module.exports={register,login,logout,logoutAll};

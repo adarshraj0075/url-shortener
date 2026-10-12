@@ -72,3 +72,22 @@ exports.logout=async({sessionId})=>{
     return "logged out";
 
 }
+
+exports.logoutAll=async(userId)=>{
+    const userSessionKey=`userSession:${userId}`;
+    const sessionIds=await client.sMembers(userSessionKey);
+
+    const sessionKeys=sessionIds.map(sessionId=>{
+        return `session:${sessionId}`
+    });
+
+    if(sessionKeys.length>0){
+        await client.del(sessionKeys)
+    }
+
+    await client.del(userSessionKey);
+
+    return {
+        message: "logged out from all device successfully"
+    }
+}
