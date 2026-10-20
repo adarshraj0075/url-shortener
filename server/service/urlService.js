@@ -84,3 +84,8 @@ exports.redirectUrl=async({shortId})=>{
     return url.longUrl
 
 }
+
+exports.getMyUrls=async(userId)=>{
+    const myUrls=await Url.find({userId});
+    return myUrls
+}

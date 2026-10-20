@@ -11,7 +11,13 @@ async function redirectUrl(req, res) {
    return res.redirect(longUrl)
 }
 
+async function getMyUrls(req,res){
+    const myUrls=await urlService.getMyUrls(req.user.id);
+    return res.status(200).json(apiResponse.success(myUrls))
+}
+
 module.exports = {
     createShortUrl,
-    redirectUrl
+    redirectUrl,
+    getMyUrls
 };
